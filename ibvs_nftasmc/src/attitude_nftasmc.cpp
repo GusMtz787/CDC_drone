@@ -118,9 +118,9 @@ int main(int argc, char *argv[])
 	ros::Publisher adaptive_gain_att_pub = nh.advertise<geometry_msgs::Vector3>("adaptive_gain_attitude",100);
 	ros::Publisher sigma_att_pub = nh.advertise<geometry_msgs::Vector3>("sigma_att",100);
 	
-    xi_1 << 3, 3, 1;
+    xi_1 << 1.5, 1.5, 1;
     lambda << 5, 5, 5;
-    xi_2 << 1, 1, 1;
+    xi_2 << 1.5, 1.5, 0.5;
     varpi << 4, 4, 4;
     vartheta << 3, 3, 3;
     K1 << 0, 0, 0;
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     kmin << 2, 2, 1;
     mu << 0.2, 0.2, 0.2;
 	alpha << 5, 5, 5;
-	beta << 0.005, 0.005, 0.05;
+	beta << 0.005, 0.005, 1;
 
 	attitude_vel_des(0) = 0;
 	attitude_vel_des(1) = 0;

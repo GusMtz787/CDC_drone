@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
     imgFeat_des << 0,0,1,0;
     xi_1 << 1, 1, 2, 1;
     lambda << 3, 3, 3, 3;
-    xi_2 << 0.5, 0.5, 1, 0.8;
+    xi_2 << 0.25, 0.25, 0.5, 0.5;
     varpi << 4, 4, 4, 4;
     vartheta << 3, 3, 3, 3;
     K1 << 0, 0, 0, 0;
