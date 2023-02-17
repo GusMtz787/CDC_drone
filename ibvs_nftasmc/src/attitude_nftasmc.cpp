@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 	
     xi_1 << 1.5, 1.5, 1;
     lambda << 5, 5, 5;
-    xi_2 << 1.5, 1.5, 0.5;
+    xi_2 << 2.5, 2.5, 2;
     varpi << 4, 4, 4;
     vartheta << 3, 3, 3;
     K1 << 0, 0, 0;
