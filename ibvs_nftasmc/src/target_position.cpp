@@ -86,6 +86,7 @@ int main(int argc, char** argv)
 		pos_y = pos_y + yp*step;
 		yaw = 0.3*t;		
 		
+
 		/*
 		arg = 0.5*t;
 		pos_x = cos(arg);
@@ -112,6 +113,7 @@ int main(int argc, char** argv)
 		yawRate = 0.005*3.141592;
 		yawAccel = 0;
 		*/
+
 		/*
 		pos_x = 0.1*3.141592*t;
 		pos_y = 0.1*3.141592*t;
