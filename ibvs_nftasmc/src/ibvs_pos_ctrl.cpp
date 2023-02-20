@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
     imgFeat_des << 0,0,1,0;
     xi_1 << 1.5, 1.5, 2, 1;
     lambda << 3, 3, 3, 3;
-    xi_2 << 0.25, 0.25, 0.5, 0.5;
+    xi_2 << 1.5, 1.5, 1.5, 0.5;
     varpi << 4, 4, 4, 4;
     vartheta << 3, 3, 3, 3;
     K1 << 0, 0, 0, 0;
@@ -242,8 +242,8 @@ int main(int argc, char *argv[])
     k_reg << 0.05, 0.05, 0.5, 0.1;
     kmin << 0.01, 0.01, 0.01, 0.1;
     mu << 0.05, 0.05, 0.1, 0.1;
-    alpha << 0.005, 0.005, 0.05, 0.001;
-    beta << 10, 10, 3, 7;
+    alpha << 0.05, 0.05, 0.05, 0.01;
+    beta << 5, 5, 3, 5;
     
     kappa_dot << 0,0,0,0;
     e3 << 0,0,1;
@@ -275,6 +275,7 @@ int main(int argc, char *argv[])
         v_imgFeat << quad_vel_VF(0),quad_vel_VF(1),quad_vel_VF(2),quad_attVel(2);
         kappa << (tgt_vel_VF(0)/zD), (tgt_vel_VF(1)/zD), (tgt_vel_VF(2)/zD), tgt_YR; 
         
+        std::cout << "errors: " << imgFeat - imgFeat_des << '\n';
         error = imgFeat - imgFeat_des;
         error_dot = (Omega*v_imgFeat) + kappa;
         //Sliding surfaces and adaptive sliding mode controller

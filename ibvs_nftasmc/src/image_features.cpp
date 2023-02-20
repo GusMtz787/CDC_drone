@@ -497,8 +497,8 @@ int main(int argc, char *argv[])
 			qpsi = -0.5 * atan(2*mu11/den);
 
             //Publishing data via Rostopics
-            im_feat_vec.x = 0;//qx;
-            im_feat_vec.y = 0;//qy;
+            im_feat_vec.x = qx;
+            im_feat_vec.y = qy;
             im_feat_vec.z = qz;
             im_feat_vec.w = qpsi;
 
@@ -508,11 +508,11 @@ int main(int argc, char *argv[])
             a_value_pub.publish(a_val);
 			
 			
-			std::cout << "p1 " << p1_vs_vf(0) << ", " << p1_vs_vf(1) << std::endl;
-			std::cout << "p2 " << p2_vs_vf(0) << ", " << p2_vs_vf(1) << std::endl;
-			std::cout << "p3 " << p3_vs_vf(0) << ", " << p3_vs_vf(1) << std::endl;
-			std::cout << "p4 " << p4_vs_vf(0) << ", " << p4_vs_vf(1) << std::endl;
-			std::cout << "mu11 " << mu11 << std::endl;
+			std::cout << "p1 " << p1_vs_vf(0) << ", " << p1_vs_vf(1) << '\n';
+			std::cout << "p2 " << p2_vs_vf(0) << ", " << p2_vs_vf(1) << '\n';
+			std::cout << "p3 " << p3_vs_vf(0) << ", " << p3_vs_vf(1) << '\n';
+			std::cout << "p4 " << p4_vs_vf(0) << ", " << p4_vs_vf(1) << '\n';
+			std::cout << "mu11 " << mu11 << '\n';
 
 			
         }

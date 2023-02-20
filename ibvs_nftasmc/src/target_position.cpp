@@ -78,6 +78,7 @@ int main(int argc, char** argv)
 		t = i*step;
 		
 		// Circle Trajectory (wide)
+		
 		xp = 0.6 * cos(0.3*t);
 		yp = 0.6 * sin(0.3*t);
 		yawRate = 0.3;
@@ -86,6 +87,7 @@ int main(int argc, char** argv)
 		pos_y = pos_y + yp*step;
 		yaw = 0.3*t;		
 		
+
 		/*
 		arg = 0.5*t;
 		pos_x = cos(arg);
@@ -136,6 +138,8 @@ int main(int argc, char** argv)
 		yawRate = 0;
 		yawAccel = 0;
 		*/
+		
+		// Static Position
 		/*
 		pos_x = 0;
 		pos_y = 0;
@@ -151,6 +155,7 @@ int main(int argc, char** argv)
 		yawAccel = 0;
 		*/
 
+		// Assignt parameters to trajectories
 		tgt_position.x = pos_x;
 		tgt_position.y = pos_y;
 		tgt_position.z = pos_z;
