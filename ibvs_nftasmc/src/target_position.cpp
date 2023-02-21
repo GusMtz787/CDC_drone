@@ -2,8 +2,10 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Vector3.h>
 #include <std_msgs/Float64.h>
+#include <eigen3/Eigen/Dense>
 
-
+Eigen::Vector3f quadPosition;
+Eigen::Vector3f linear_error;
 float pos_x;
 float pos_y;
 float xp;
@@ -20,6 +22,13 @@ float arg;
 float x_traj;
 float y_traj;
 
+void quad_positionCallback(const geometry_msgs::Vector3::ConstPtr& quadPos)
+{
+	quadPosition(0) = quadPos->x;
+	quadPosition(1) = quadPos->y;
+	quadPosition(2) = quadPos->z;
+}
+
 int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "tgt_pos");
@@ -32,6 +41,8 @@ int main(int argc, char** argv)
 	ros::Publisher tgt_yaw_rate_pub = nh.advertise<std_msgs::Float64>("tgt_yaw_rate",100);
 	ros::Publisher tgt_accel_pub = nh.advertise<geometry_msgs::Vector3>("tgt_acceleration",100);
 	ros::Publisher tgt_yaw_acceleration_pub = nh.advertise<std_msgs::Float64>("tgt_yaw_acceleration",100);
+
+	ros::Subscriber quad_pos = nh.subscribe("quad_position", 100, &quad_positionCallback);
 
 	geometry_msgs::Vector3 tgt_position;
 	std_msgs::Float64 tgt_yaw;
@@ -171,6 +182,10 @@ int main(int argc, char** argv)
 		tgt_accel.z = 0;
 		tgt_yaw_accel.data = 0;
 
+		// Calculate linear errors
+		linear_error(0) = pos_x - quadPosition(0);
+		linear_error(1) = pos_y - quadPosition(1);
+		linear_error(2) = 2.5 - quadPosition(2);
 
 		tgt_pos_pub.publish(tgt_position);
 		tgt_yaw_pub.publish(tgt_yaw);
@@ -183,7 +198,7 @@ int main(int argc, char** argv)
 
 		i = i+1;
 
-		std::cout << yawRate << std::endl;
+		std::cout << linear_error << std::endl;
 
 		ros::spinOnce();
 		loop_rate.sleep();

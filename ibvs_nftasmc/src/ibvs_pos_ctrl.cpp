@@ -220,7 +220,6 @@ int main(int argc, char *argv[])
     std_msgs::Float64 z_des_var;
     geometry_msgs::Quaternion desired_attitude_var;
 
-
 	ros::Subscriber im_feat_sub = nh.subscribe("ImFeat_vector", 100, &imFeatCallback);
     ros::Subscriber a_value_sub = nh.subscribe("a_value", 100, &aValueCallback);
     ros::Subscriber tgt_vel_sub = nh.subscribe("tgt_velocity", 100, &tgtVelCallback);
@@ -232,9 +231,9 @@ int main(int argc, char *argv[])
     ros::Subscriber quad_att_sub = nh.subscribe("quad_attitude", 100, &quadAttCallback);
 
     imgFeat_des << 0,0,1,0;
-    xi_1 << 1.5, 1.5, 2, 1;
+    xi_1 << 1, 1, 2, 2;
     lambda << 3, 3, 3, 3;
-    xi_2 << 1.5, 1.5, 1.5, 0.5;
+    xi_2 << 0.8, 0.8, 1.5, 2;
     varpi << 4, 4, 4, 4;
     vartheta << 3, 3, 3, 3;
     K1 << 0, 0, 0, 0;
@@ -242,7 +241,7 @@ int main(int argc, char *argv[])
     k_reg << 0.05, 0.05, 0.5, 0.1;
     kmin << 0.01, 0.01, 0.01, 0.1;
     mu << 0.05, 0.05, 0.1, 0.1;
-    alpha << 0.05, 0.05, 0.05, 0.01;
+    alpha << 0.5, 0.5, 0.05, 0.05;
     beta << 5, 5, 3, 5;
     
     kappa_dot << 0,0,0,0;
