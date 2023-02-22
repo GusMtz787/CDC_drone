@@ -5,7 +5,7 @@
 #include <eigen3/Eigen/Dense>
 
 Eigen::Vector3f quadPosition;
-Eigen::Vector3f linear_error;
+geometry_msgs::Vector3 linear_error;
 float pos_x;
 float pos_y;
 float xp;
@@ -21,6 +21,14 @@ float step = 0.01;
 float arg;
 float x_traj;
 float y_traj;
+
+void calculate_linear_error(float pos_x, float pos_y, float zD, Eigen::Vector3f quadPosition)
+{
+	linear_error.x = pos_x - quadPosition(0);
+	linear_error.y = pos_y - quadPosition(1);
+	linear_error.z = -zD - quadPosition(2);
+
+}
 
 void quad_positionCallback(const geometry_msgs::Vector3::ConstPtr& quadPos)
 {
@@ -41,6 +49,7 @@ int main(int argc, char** argv)
 	ros::Publisher tgt_yaw_rate_pub = nh.advertise<std_msgs::Float64>("tgt_yaw_rate",100);
 	ros::Publisher tgt_accel_pub = nh.advertise<geometry_msgs::Vector3>("tgt_acceleration",100);
 	ros::Publisher tgt_yaw_acceleration_pub = nh.advertise<std_msgs::Float64>("tgt_yaw_acceleration",100);
+	ros::Publisher linear_error_pub = nh.advertise<geometry_msgs::Vector3>("linear_error",100);
 
 	ros::Subscriber quad_pos = nh.subscribe("quad_position", 100, &quad_positionCallback);
 
@@ -53,7 +62,6 @@ int main(int argc, char** argv)
 
 	geometry_msgs::Vector3 tgt_accel;
 	std_msgs::Float64 tgt_yaw_accel;	
-	
 	
 	int i = 0;
 	int sim_time = 100/step; //Seconds / step
@@ -72,16 +80,19 @@ int main(int argc, char** argv)
 	tgt_vel.y = yp;
 	tgt_vel.z = 0;
 	tgt_psi_rate.data = yawRate;
+	calculate_linear_error(pos_x, pos_y, 2.5, quadPosition);
 	ros::Duration(0.05).sleep();
 	tgt_pos_pub.publish(tgt_position);
 	tgt_yaw_pub.publish(tgt_yaw);
 	tgt_vel_pub.publish(tgt_vel);
 	tgt_yaw_rate_pub.publish(tgt_psi_rate);
+	linear_error_pub.publish(linear_error);
 	ros::Duration(2).sleep();
 	tgt_pos_pub.publish(tgt_position);
 	tgt_yaw_pub.publish(tgt_yaw);
 	tgt_vel_pub.publish(tgt_vel);
 	tgt_yaw_rate_pub.publish(tgt_psi_rate);
+	linear_error_pub.publish(linear_error);
 
 	ros::Duration(0.1).sleep();
 	while(ros::ok())
@@ -182,10 +193,7 @@ int main(int argc, char** argv)
 		tgt_accel.z = 0;
 		tgt_yaw_accel.data = 0;
 
-		// Calculate linear errors
-		linear_error(0) = pos_x - quadPosition(0);
-		linear_error(1) = pos_y - quadPosition(1);
-		linear_error(2) = 2.5 - quadPosition(2);
+		calculate_linear_error(pos_x, pos_y, 2.5, quadPosition);
 
 		tgt_pos_pub.publish(tgt_position);
 		tgt_yaw_pub.publish(tgt_yaw);
@@ -195,6 +203,7 @@ int main(int argc, char** argv)
 
 		tgt_accel_pub.publish(tgt_accel);
 		
+		linear_error_pub.publish(linear_error);
 
 		i = i+1;
 
