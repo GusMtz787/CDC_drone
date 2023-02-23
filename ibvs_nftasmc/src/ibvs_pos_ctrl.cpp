@@ -231,9 +231,9 @@ int main(int argc, char *argv[])
     ros::Subscriber quad_att_sub = nh.subscribe("quad_attitude", 100, &quadAttCallback);
 
     imgFeat_des << 0,0,1,0;
-    xi_1 << 0.1, 0.1, 0.3, 2;
+    xi_1 << 0.1, 0.1, 0.1, 2;
     lambda << 3, 3, 3, 3;
-    xi_2 << 0.6, 0.6, 0.3, 2;
+    xi_2 << 0.5, 0.5, 0.3, 2;
     varpi << 4, 4, 4, 4;
     vartheta << 3, 3, 3, 3;
     K1 << 0, 0, 0, 0;

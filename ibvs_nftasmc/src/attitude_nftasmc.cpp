@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     kmin << 2, 2, 1;
     mu << 0.2, 0.2, 0.2;
 	alpha << 5, 5, 5;
-	beta << 0.005, 0.005, 1;
+	beta << 0.05, 0.05, 1;
 
 	attitude_vel_des(0) = 0;
 	attitude_vel_des(1) = 0;
