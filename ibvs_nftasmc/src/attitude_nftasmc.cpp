@@ -139,8 +139,8 @@ int main(int argc, char *argv[])
 	{	
 		for(int i = 0; i <= 2; i++)
 		{	
-			error(i) = attitude(i) - attitude_des(i);
-			error_dot(i) = attitude_vel(i) - attitude_vel_des(i);
+			error(i) = attitude_des(i) - attitude(i);
+			error_dot(i) = attitude_vel_des(i) - attitude_vel(i);
 
 			ss(i) = error(i) + xi_1(i) * powf(std::abs(error(i)),lambda(i)) * sign(error(i)) + xi_2(i) * powf(std::abs(error_dot(i)),(varpi(i)/vartheta(i))) * sign(error_dot(i));
 			
@@ -150,9 +150,9 @@ int main(int argc, char *argv[])
             asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
 		}
 		
-		tau(0) = Jxx * (asmc(0) - (((Jyy-Jzz)/Jxx) * attitude_vel(1) * attitude_vel(2)) - (vartheta(0)/(varpi(0)*xi_2(0))) * sign(error_dot(0)) * powf(std::abs(error_dot(0)),(2-(varpi(0)/vartheta(0)))) * (1 + xi_1(0) * lambda(0) * powf(std::abs(error(0)),lambda(0)-1)));
-		tau(1) = Jyy * (asmc(1) - (((Jzz-Jxx)/Jyy) * attitude_vel(0) * attitude_vel(2)) - (vartheta(1)/(varpi(1)*xi_2(1))) * sign(error_dot(1)) * powf(std::abs(error_dot(1)),(2-(varpi(1)/vartheta(1)))) * (1 + xi_1(1) * lambda(1) * powf(std::abs(error(1)),lambda(1)-1)));
-		tau(2) = Jzz * (asmc(2) - (((Jxx-Jyy)/Jzz) * attitude_vel(0) * attitude_vel(1)) - (vartheta(2)/(varpi(2)*xi_2(2))) * sign(error_dot(2)) * powf(std::abs(error_dot(2)),(2-(varpi(2)/vartheta(2)))) * (1 + xi_1(2) * lambda(2) * powf(std::abs(error(2)),lambda(2)-1)));
+		tau(0) = Jxx * (-asmc(0) + (((Jyy-Jzz)/Jxx) * attitude_vel(1) * attitude_vel(2)) + (vartheta(0)/(varpi(0)*xi_2(0))) * sign(error_dot(0)) * powf(std::abs(error_dot(0)),(2-(varpi(0)/vartheta(0)))) * (1 + xi_1(0) * lambda(0) * powf(std::abs(error(0)),lambda(0)-1)));
+		tau(1) = Jyy * (-asmc(1) + (((Jzz-Jxx)/Jyy) * attitude_vel(0) * attitude_vel(2)) + (vartheta(1)/(varpi(1)*xi_2(1))) * sign(error_dot(1)) * powf(std::abs(error_dot(1)),(2-(varpi(1)/vartheta(1)))) * (1 + xi_1(1) * lambda(1) * powf(std::abs(error(1)),lambda(1)-1)));
+		tau(2) = Jzz * (-asmc(2) + (((Jxx-Jyy)/Jzz) * attitude_vel(0) * attitude_vel(1)) + (vartheta(2)/(varpi(2)*xi_2(2))) * sign(error_dot(2)) * powf(std::abs(error_dot(2)),(2-(varpi(2)/vartheta(2)))) * (1 + xi_1(2) * lambda(2) * powf(std::abs(error(2)),lambda(2)-1)));
 
 
 		quadTorques.x = tau(0);

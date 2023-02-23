@@ -274,9 +274,9 @@ int main(int argc, char *argv[])
         v_imgFeat << quad_vel_VF(0),quad_vel_VF(1),quad_vel_VF(2),quad_attVel(2);
         kappa << (tgt_vel_VF(0)/zD), (tgt_vel_VF(1)/zD), (tgt_vel_VF(2)/zD), tgt_YR; 
         
-        std::cout << "errors: " << imgFeat - imgFeat_des << '\n';
-        error = imgFeat - imgFeat_des;
-        error_dot = (Omega*v_imgFeat) + kappa;
+        std::cout << "errors: " << imgFeat_des - imgFeat << '\n';
+        error = imgFeat_des - imgFeat;
+        error_dot = -(Omega*v_imgFeat) - kappa;
         //Sliding surfaces and adaptive sliding mode controller
         for (int i = 0; i<=3; i++)
         {
@@ -290,13 +290,13 @@ int main(int argc, char *argv[])
         
         //Control inputs
         /////////////yaw_rotation///////////////////////
-        ibvs_ctrl_input(3) = (-asmc(3)  + (vartheta(3)/(varpi(3)*xi_2(3))) * sign(error_dot(3)) * powf(std::abs(error_dot(3)),(2-(varpi(3)/vartheta(3)))) * (1 + xi_1(3) * lambda(3) * powf(std::abs(error(3)),lambda(3)-1))); //yaw_ddot
+        ibvs_ctrl_input(3) = -(-asmc(3) + (vartheta(3)/(varpi(3)*xi_2(3))) * sign(error_dot(3)) * powf(std::abs(error_dot(3)),(2-(varpi(3)/vartheta(3)))) * (1 + xi_1(3) * lambda(3) * powf(std::abs(error(3)),lambda(3)-1))); //yaw_ddot
         /////////////x-axis///////////////////////
-        ibvs_ctrl_input(0) = zD * (-asmc(0)  + ibvs_ctrl_input(3) * imgFeatLinear(1) + quad_attVel(2) * imgFeatLinear_dot(1) + (vartheta(0)/(varpi(0)*xi_2(0))) * sign(error_dot(0)) * powf(std::abs(error_dot(0)),(2-(varpi(0)/vartheta(0)))) * (1 + xi_1(0) * lambda(0) * powf(std::abs(error(0)),lambda(0)-1)));
+        ibvs_ctrl_input(0) = -zD * (-asmc(0)  - ibvs_ctrl_input(3) * imgFeatLinear(1) - quad_attVel(2) * imgFeatLinear_dot(1) + (vartheta(0)/(varpi(0)*xi_2(0))) * sign(error_dot(0)) * powf(std::abs(error_dot(0)),(2-(varpi(0)/vartheta(0)))) * (1 + xi_1(0) * lambda(0) * powf(std::abs(error(0)),lambda(0)-1)));
         /////////////y-axis///////////////////////
-        ibvs_ctrl_input(1) = zD * (-asmc(1)  - ibvs_ctrl_input(3) * imgFeatLinear(0) - quad_attVel(2) * imgFeatLinear_dot(0) + (vartheta(1)/(varpi(1)*xi_2(1))) * sign(error_dot(1)) * powf(std::abs(error_dot(1)),(2-(varpi(1)/vartheta(1)))) * (1 + xi_1(1) * lambda(1) * powf(std::abs(error(1)),lambda(1)-1)));
+        ibvs_ctrl_input(1) = -zD * (-asmc(1)  + ibvs_ctrl_input(3) * imgFeatLinear(0) + quad_attVel(2) * imgFeatLinear_dot(0) + (vartheta(1)/(varpi(1)*xi_2(1))) * sign(error_dot(1)) * powf(std::abs(error_dot(1)),(2-(varpi(1)/vartheta(1)))) * (1 + xi_1(1) * lambda(1) * powf(std::abs(error(1)),lambda(1)-1)));
         /////////////z-axis///////////////////////
-        ibvs_ctrl_input(2) = zD * (-asmc(2) + (vartheta(2)/(varpi(2)*xi_2(2))) * sign(error_dot(2)) * powf(std::abs(error_dot(2)),(2-(varpi(2)/vartheta(2)))) * (1 + xi_1(2) * lambda(2) * powf(std::abs(error(2)),lambda(2)-1)));       
+        ibvs_ctrl_input(2) = -zD * (-asmc(2) + (vartheta(2)/(varpi(2)*xi_2(2))) * sign(error_dot(2)) * powf(std::abs(error_dot(2)),(2-(varpi(2)/vartheta(2)))) * (1 + xi_1(2) * lambda(2) * powf(std::abs(error(2)),lambda(2)-1)));       
 
         //Quad's virtual frame dynamics 
         quad_accel_VF << ibvs_ctrl_input(0), ibvs_ctrl_input(1), ibvs_ctrl_input(2); 
