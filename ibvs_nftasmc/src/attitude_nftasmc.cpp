@@ -29,8 +29,8 @@ Eigen::Vector3f xi_2;
 Eigen::Vector3f varpi;
 Eigen::Vector3f vartheta;
 Eigen::Vector3f asmc;
-Eigen::Vector3f K1;
-Eigen::Vector3f K1_dot;
+Eigen::Vector3f K1(0,0,0);
+Eigen::Vector3f K1_dot(0,0,0);
 Eigen::Vector3f K2;
 Eigen::Vector3f k_reg;
 Eigen::Vector3f kmin;
@@ -118,9 +118,9 @@ int main(int argc, char *argv[])
 	ros::Publisher adaptive_gain_att_pub = nh.advertise<geometry_msgs::Vector3>("adaptive_gain_attitude",100);
 	ros::Publisher sigma_att_pub = nh.advertise<geometry_msgs::Vector3>("sigma_att",100);
 	
-    xi_1 << 1.5, 1.5, 1;
-    lambda << 5, 5, 5;
-    xi_2 << 2.5, 2.5, 2;
+    xi_1 << 1, 0.5, 0.5;
+    lambda << 1.5, 1.5, 1.5;
+    xi_2 << 1.2, 1.2, 1.2;
     varpi << 4, 4, 4;
     vartheta << 3, 3, 3;
     K1 << 0, 0, 0;
@@ -128,8 +128,6 @@ int main(int argc, char *argv[])
     k_reg << 1, 1, 1;
     kmin << 2, 2, 1;
     mu << 0.2, 0.2, 0.2;
-	alpha << 5, 5, 5;
-	beta << 0.05, 0.05, 1;
 
 	attitude_vel_des(0) = 0;
 	attitude_vel_des(1) = 0;
@@ -144,10 +142,22 @@ int main(int argc, char *argv[])
 
 			ss(i) = error(i) + xi_1(i) * powf(std::abs(error(i)),lambda(i)) * sign(error(i)) + xi_2(i) * powf(std::abs(error_dot(i)),(varpi(i)/vartheta(i))) * sign(error_dot(i));
 			
-			K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * K1(i);
+			if(K1(i) > kmin(i))	
+			{
+				K1_dot(i) = k_reg(i) * sign(std::abs(ss(i))-mu(i));
+			}
+			else
+			{
+				K1_dot(i) = kmin(i);
+			}
+			
+			K1(i) = K1(i) + step_size * K1_dot(i); //New value of K1
+			asmc(i) = -K1(i) * powf(std::abs(ss(i)),0.5) * sign(ss(i)) - K2(i) * ss(i);
 
-            K1(i) = K1(i) + step_size*K1_dot(i);
-            asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
+			// K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * powf(K1(i),2);
+
+            // K1(i) = K1(i) + step_size*K1_dot(i);
+            // asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
 		}
 		
 		tau(0) = Jxx * (-asmc(0) + (((Jyy-Jzz)/Jxx) * attitude_vel(1) * attitude_vel(2)) + (vartheta(0)/(varpi(0)*xi_2(0))) * sign(error_dot(0)) * powf(std::abs(error_dot(0)),(2-(varpi(0)/vartheta(0)))) * (1 + xi_1(0) * lambda(0) * powf(std::abs(error(0)),lambda(0)-1)));

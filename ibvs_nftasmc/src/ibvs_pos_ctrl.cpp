@@ -44,8 +44,8 @@ Eigen::Vector4f xi_2;
 Eigen::Vector4f varpi;
 Eigen::Vector4f vartheta;
 Eigen::Vector4f asmc;
-Eigen::Vector4f K1;
-Eigen::Vector4f K1_dot;
+Eigen::Vector4f K1(0,0,0,0);
+Eigen::Vector4f K1_dot(0,0,0,0);
 Eigen::Vector4f K2;
 Eigen::Vector4f k_reg;
 Eigen::Vector4f kmin;
@@ -231,9 +231,9 @@ int main(int argc, char *argv[])
     ros::Subscriber quad_att_sub = nh.subscribe("quad_attitude", 100, &quadAttCallback);
 
     imgFeat_des << 0,0,1,0;
-    xi_1 << 0.1, 0.1, 0.1, 2;
-    lambda << 3, 3, 3, 3;
-    xi_2 << 0.5, 0.5, 0.3, 2;
+    xi_1 << 4, 4, 6, 6;
+    lambda << 2, 2, 1.5, 1.5;
+    xi_2 << 2, 2, 2, 5;
     varpi << 4, 4, 4, 4;
     vartheta << 3, 3, 3, 3;
     K1 << 0, 0, 0, 0;
@@ -241,8 +241,6 @@ int main(int argc, char *argv[])
     k_reg << 0.05, 0.05, 0.5, 0.1;
     kmin << 0.01, 0.01, 0.01, 0.1;
     mu << 0.05, 0.05, 0.1, 0.1;
-    alpha << 0.5, 0.5, 0.5, 0.05;
-    beta << 5, 5, 5, 5;
     
     kappa_dot << 0,0,0,0;
     e3 << 0,0,1;
@@ -282,10 +280,21 @@ int main(int argc, char *argv[])
         {
             ss(i) = error(i) + xi_1(i) * powf(std::abs(error(i)),lambda(i)) * sign(error(i)) + xi_2(i) * powf(std::abs(error_dot(i)),(varpi(i)/vartheta(i))) * sign(error_dot(i));
             
-            K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * K1(i);
+            if (K1(i)>kmin(i))
+            {
+                K1_dot(i) = k_reg(i)*sign(std::abs(ss(i))-mu(i));
+            }
+            else
+            {
+                K1_dot(i) = kmin(i);
+            }
 
             K1(i) = K1(i) + step_size*K1_dot(i);
-            asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
+            asmc(i) = -K1(i) * powf(std::abs(ss(i)),0.5) * sign(ss(i)) - K2(i) * ss(i);
+            // K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * powf(K1(i),2);
+
+            // K1(i) = K1(i) + step_size*K1_dot(i);
+            // asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
         }
         
         //Control inputs
