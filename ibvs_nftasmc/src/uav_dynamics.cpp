@@ -117,8 +117,8 @@ int main(int argc, char **argv)
 		 0, 0.0478, 0,
 		 0, 0, 0.0599;
 	
-	linear_position << 0,0.1,-3;
-	attitude_position << 0,0,0;
+	linear_position << 0,0,-3;
+	attitude_position << 0,0,0.1;
 
 	linear_velocity_BF << 0,0,0;
 	linear_velocity_IF << 0,0,0;
