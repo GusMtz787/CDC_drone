@@ -497,8 +497,8 @@ int main(int argc, char *argv[])
 			qpsi = -0.5 * atan(2*mu11/den);
 
             //Publishing data via Rostopics
-            im_feat_vec.x = 0;
-            im_feat_vec.y = 0;
+            im_feat_vec.x = qx;
+            im_feat_vec.y = qy;
             im_feat_vec.z = qz;
             im_feat_vec.w = qpsi;
 

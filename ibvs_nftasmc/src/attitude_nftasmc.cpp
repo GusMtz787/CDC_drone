@@ -118,9 +118,9 @@ int main(int argc, char *argv[])
 	ros::Publisher adaptive_gain_att_pub = nh.advertise<geometry_msgs::Vector3>("adaptive_gain_attitude",100);
 	ros::Publisher sigma_att_pub = nh.advertise<geometry_msgs::Vector3>("sigma_att",100);
 	
-    xi_1 << 1, 1, 1;
+    xi_1 << 1, 0.5, 0.5;
     lambda << 3, 3, 3;
-    xi_2 << 1, 1, 5;
+    xi_2 << 1.2, 1.2, 1.2;
     varpi << 4, 4, 4;
     vartheta << 3, 3, 3;
     K1 << 0, 0, 0;
@@ -128,8 +128,8 @@ int main(int argc, char *argv[])
     k_reg << 1, 1, 1;
     kmin << 2, 2, 1;
     mu << 0.2, 0.2, 0.2;
-	alpha << 1, 1, 1;
-	beta << 1, 1, 1;
+	alpha << 10, 10, 1;
+	beta << 0.3, 0.1, 1;
 
 	attitude_vel_des(0) = 0;
 	attitude_vel_des(1) = 0;
@@ -157,7 +157,7 @@ int main(int argc, char *argv[])
 			// K1(i) = K1(i) + step_size * K1_dot(i); //New value of K1
 			// asmc(i) = -K1(i) * powf(std::abs(ss(i)),0.5) * sign(ss(i)) - K2(i) * ss(i);
 
-			// *************** Modified adaptive law ***************
+			//*************** Modified adaptive law ***************
 			K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * powf(K1(i),2);
 
             K1(i) = K1(i) + step_size*K1_dot(i);
