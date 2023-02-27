@@ -29,8 +29,8 @@ Eigen::Vector3f xi_2;
 Eigen::Vector3f varpi;
 Eigen::Vector3f vartheta;
 Eigen::Vector3f asmc;
-Eigen::Vector3f K1(0,0,0);
-Eigen::Vector3f K1_dot(0,0,0);
+Eigen::Vector3f K1;
+Eigen::Vector3f K1_dot;
 Eigen::Vector3f K2;
 Eigen::Vector3f k_reg;
 Eigen::Vector3f kmin;
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 	ros::Publisher sigma_att_pub = nh.advertise<geometry_msgs::Vector3>("sigma_att",100);
 	
     xi_1 << 1, 0.5, 0.5;
-    lambda << 3, 3, 3;
+    lambda << 1.8, 1.8, 1.8;
     xi_2 << 1.2, 1.2, 1.2;
     varpi << 4, 4, 4;
     vartheta << 3, 3, 3;

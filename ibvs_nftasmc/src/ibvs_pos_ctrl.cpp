@@ -44,8 +44,8 @@ Eigen::Vector4f xi_2;
 Eigen::Vector4f varpi;
 Eigen::Vector4f vartheta;
 Eigen::Vector4f asmc;
-Eigen::Vector4f K1(0,0,0,0);
-Eigen::Vector4f K1_dot(0,0,0,0);
+Eigen::Vector4f K1;
+Eigen::Vector4f K1_dot;
 Eigen::Vector4f K2;
 Eigen::Vector4f k_reg;
 Eigen::Vector4f kmin;
@@ -232,8 +232,8 @@ int main(int argc, char *argv[])
 
     imgFeat_des << 0,0,1,0;
     xi_1 << 4, 4, 6, 6;
-    lambda << 2, 2, 2, 2;
-    xi_2 << 2, 2, 2, 5;
+    lambda << 2.5, 2.5, 2, 2;
+    xi_2 << 3, 3, 3, 3;
     varpi << 4, 4, 4, 4;
     vartheta << 3, 3, 3, 3;
     K1 << 0, 0, 0, 0;
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
     k_reg << 0.05, 0.05, 0.5, 0.1;
     kmin << 0.01, 0.01, 0.01, 0.1;
     mu << 0.05, 0.05, 0.1, 0.1;
-    alpha << 0.3, 0.01, 1, 0.05;
+    alpha << 0.005, 0.01, 1, 0.05;
     beta << 10, 10, 1, 5;
     
     kappa_dot << 0,0,0,0;
