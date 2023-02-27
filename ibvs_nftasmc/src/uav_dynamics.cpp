@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 		 0, 0.0478, 0,
 		 0, 0, 0.0599;
 	
-	linear_position << 0,0,-2.5;
+	linear_position << 0.1,0,-2.5;
 	attitude_position << 0,0,0;
 
 	linear_velocity_BF << 0,0,0;
@@ -161,8 +161,8 @@ int main(int argc, char **argv)
 		}
 		
 		//Linear dynamics
-		//force = (RotationMatrix(attitude_position).inverse() * (quad_mass * gravity * e3)) - (thrust * e3) + dist;  //disturbances
-		force = (RotationMatrix(attitude_position).inverse() * (quad_mass * gravity * e3)) - (thrust * e3); //no disturbances
+		force = (RotationMatrix(attitude_position).inverse() * (quad_mass * gravity * e3)) - (thrust * e3) + dist;  //disturbances
+		//force = (RotationMatrix(attitude_position).inverse() * (quad_mass * gravity * e3)) - (thrust * e3); //no disturbances
 		
 		linear_acceleration_BF = force/quad_mass - skewOmega(attitude_velocity) * linear_velocity_BF;
 		 

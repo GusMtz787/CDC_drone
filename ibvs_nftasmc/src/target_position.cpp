@@ -94,21 +94,21 @@ int main(int argc, char** argv)
 	tgt_yaw_rate_pub.publish(tgt_psi_rate);
 	linear_error_pub.publish(linear_error);
 
-	ros::Duration(0.1).sleep();
+	ros::Duration(2).sleep();
 	while(ros::ok())
 	{
 		t = i*step;
 		
 		// Circle Trajectory (wide)
-		/*
-		xp = 0.6 * cos(0.3*t);
-		yp = 0.6 * sin(0.3*t);
-		yawRate = 0.3;
+		
+		xp = 0.3 * cos(0.1*t);
+		yp = 0.3 * sin(0.1*t);
+		yawRate = 0.1;
 
 		pos_x = pos_x + xp*step;
 		pos_y = pos_y + yp*step;
-		yaw = 0.3*t;		
-		*/
+		yaw = 0.1*t;		
+		
 
 		/*
 		arg = 0.5*t;
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 		*/
 		
 		// Static Position
-		
+		/*
 		pos_x = 0;
 		pos_y = 0;
 			
@@ -175,7 +175,7 @@ int main(int argc, char** argv)
 		yaw = 0;
 		yawRate = 0;
 		yawAccel = 0;
-		
+		*/
 
 		// Assignt parameters to trajectories
 		tgt_position.x = pos_x;
