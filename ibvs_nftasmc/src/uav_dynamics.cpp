@@ -30,6 +30,7 @@ Eigen::Vector3f attitude_acceleration;
 
 Eigen::Vector3f tau;
 Eigen::Vector3f dist;
+Eigen::Vector2f p1;
 
 Eigen::Vector3f force(0,0,0);
 
@@ -205,7 +206,7 @@ int main(int argc, char **argv)
 		quad_vel_BF_pub.publish(BFvelocityVector);
 		
 		//std::cout << "U1 : " << U1 << std::endl;
-		std::cout << "force: " << force(0) << std::endl; 
+		//std::cout << "force: " << force(0) << std::endl; 
 		
 		ros::spinOnce();
 		loop_rate.sleep();

@@ -135,11 +135,11 @@ int main(int argc, char *argv[])
     //ROS publishers and subscribers
 	ros::Publisher im_feat_pub = nh.advertise<geometry_msgs::Quaternion>("ImFeat_vector",100);
     ros::Publisher a_value_pub = nh.advertise<std_msgs::Float64>("a_value",100);
-	
-    //ros::Publisher p1_pub = nh.advertise<geometry_msgs::Pose2D>("punto1",100);
-	//ros::Publisher p2_pub = nh.advertise<geometry_msgs::Pose2D>("punto2",100);
-	//ros::Publisher p3_pub = nh.advertise<geometry_msgs::Pose2D>("punto3",100);
-	//ros::Publisher p4_pub = nh.advertise<geometry_msgs::Pose2D>("punto4",100);
+    ros::Publisher punto1_pub = nh.advertise<geometry_msgs::Pose2D>("point_one",100);
+	ros::Publisher punto2_pub = nh.advertise<geometry_msgs::Pose2D>("point_two",100);
+	ros::Publisher punto3_pub = nh.advertise<geometry_msgs::Pose2D>("point_three",100);
+	ros::Publisher punto4_pub = nh.advertise<geometry_msgs::Pose2D>("point_four",100);
+	ros::Publisher centroid_pub = nh.advertise<geometry_msgs::Pose2D>("centroid",100);
 
     image_transport::Subscriber sub = it.subscribe("/quad/camera/image_raw", 100, imageCallback); //Gazebo_camera 
     //image_transport::Subscriber sub = it.subscribe("camera/image", 100, imageCallback); //Real camera
@@ -148,15 +148,13 @@ int main(int argc, char *argv[])
     //Declaring local variables
     geometry_msgs::Quaternion im_feat_vec;
     std_msgs::Float64 a_val;
-
-	//geometry_msgs::Pose2D punto1_vis;
-	//geometry_msgs::Pose2D punto2_vis;
-	//geometry_msgs::Pose2D punto3_vis;
-	//geometry_msgs::Pose2D punto4_vis;
+	geometry_msgs::Pose2D punto1_vis;
+	geometry_msgs::Pose2D punto2_vis;
+	geometry_msgs::Pose2D punto3_vis;
+	geometry_msgs::Pose2D punto4_vis;
+	geometry_msgs::Pose2D centroid;
     e3 << 0,0,1;
     
-
-
 	//Loading the dictionary where the aruco markers belong to
 	cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_7X7_50);
 
@@ -461,7 +459,6 @@ int main(int argc, char *argv[])
 			p3_vs_cf << p3x*pixel_size, p3y*pixel_size, focal_length;
 			p4_vs_cf << p4x*pixel_size, p4y*pixel_size, focal_length;
 
-
             //Camera frame to Virtual frame conversion
 			beta_p1 = focal_length/(e3.transpose()*Rtp(uav_att(0),uav_att(1))*p1_vs_cf);
 			beta_p2 = focal_length/(e3.transpose()*Rtp(uav_att(0),uav_att(1))*p2_vs_cf);
@@ -479,6 +476,7 @@ int main(int argc, char *argv[])
 			p3_vs_vf = Ryaw(uav_att(2)).transpose()*Ryaw(uav_att(2)).transpose()*p3_vs_vf;
 			p4_vs_vf = Ryaw(uav_att(2)).transpose()*Ryaw(uav_att(2)).transpose()*p4_vs_vf;
 			*/	
+
             //Ordinary moments. Centroid
 			ug_vs = (p1_vs_vf(0) + p2_vs_vf(0) + p3_vs_vf(0) + p4_vs_vf(0)) / 4;
 			ng_vs = (p1_vs_vf(1) + p2_vs_vf(1) + p3_vs_vf(1) + p4_vs_vf(1)) / 4;
@@ -504,9 +502,25 @@ int main(int argc, char *argv[])
 
             a_val.data = a;			
 
+			punto1_vis.x = p1_vs_vf(0);
+			punto1_vis.y = p1_vs_vf(1);
+			punto2_vis.x = p2_vs_vf(0);
+			punto2_vis.y = p2_vs_vf(1);
+			punto3_vis.x = p3_vs_vf(0);
+			punto3_vis.y = p3_vs_vf(1);
+			punto4_vis.x = p4_vs_vf(0);
+			punto4_vis.y = p4_vs_vf(1);
+			centroid.x = ug_vs;
+			centroid.y = ng_vs;
+			
+
            	im_feat_pub.publish(im_feat_vec);
             a_value_pub.publish(a_val);
-			
+			punto1_pub.publish(punto1_vis);
+			punto2_pub.publish(punto2_vis);
+			punto3_pub.publish(punto3_vis);
+			punto4_pub.publish(punto4_vis);
+			centroid_pub.publish(centroid);
 			
 			std::cout << "p1 " << p1_vs_vf(0) << ", " << p1_vs_vf(1) << '\n';
 			std::cout << "p2 " << p2_vs_vf(0) << ", " << p2_vs_vf(1) << '\n';
@@ -514,7 +528,6 @@ int main(int argc, char *argv[])
 			std::cout << "p4 " << p4_vs_vf(0) << ", " << p4_vs_vf(1) << '\n';
 			std::cout << "mu11 " << mu11 << '\n';
 
-			
         }
 
 		ros::spinOnce();
