@@ -34,7 +34,9 @@ int main(int argc, char *argv[])
 
     ifstream myFile;
     string line;
-    myFile.open("/home/gus787/Documents/Thesis/IROS_drone/src/ibvs_nftasmc/src/disturbances.csv");
+    // myFile.open("/home/gus787/Documents/Thesis/IROS_drone/src/ibvs_nftasmc/src/disturbances.csv");
+    // myFile.open("/home/gus787/Documents/Thesis/Papers/CDC_drone_results/2023-03-09-15-19-14/disturbancesWithoutHeaders.csv");
+    myFile.open("/home/gus787/Documents/Thesis/Papers/moderate_disturbances.csv");
     getline(myFile, line);
     	
     ros::Duration(2.1).sleep();

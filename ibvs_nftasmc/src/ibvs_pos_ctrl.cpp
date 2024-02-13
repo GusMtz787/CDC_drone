@@ -71,7 +71,7 @@ float a;
 float zD = 2.5;
 float tgt_YR;
 float tgt_YAccel;
-float step_size = 0.02;
+float step_size = 0.01;
 float quad_mass = 2;
 float gravity = 9.81;
 float thrust = quad_mass * gravity;
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 {
 	ros::init(argc, argv, "ibvs_pos_ctrl");
 	ros::NodeHandle nh;
-	ros::Rate loop_rate(50);	
+	ros::Rate loop_rate(100);	
     
     //ROS publishers and subscribers
     ros::Publisher error_pub = nh.advertise<geometry_msgs::Quaternion>("error_visual_servoing",100);
@@ -209,6 +209,9 @@ int main(int argc, char *argv[])
     ros::Publisher desired_att_pub = nh.advertise<geometry_msgs::Quaternion>("desired_attitude",100);
     ros::Publisher psiddot_des_pub = nh.advertise<std_msgs::Float64>("yaw_ddot_desired",100);
     ros::Publisher z_des_pub = nh.advertise<std_msgs::Float64>("z_des",100);
+
+    ros::Publisher accelerations_control = nh.advertise<geometry_msgs::Vector3>("accelerations_control",100);
+    geometry_msgs::Vector3 accelerations_des_var;
 
     geometry_msgs::Quaternion error_var;
     geometry_msgs::Quaternion error_dot_var;
@@ -241,7 +244,8 @@ int main(int argc, char *argv[])
     k_reg << 0.05, 0.05, 0.5, 0.1;
     kmin << 0.01, 0.01, 0.01, 0.1;
     mu << 0.05, 0.05, 0.1, 0.1;
-    alpha << 0.008, 0.007, 0.5, 0.05;
+    //alpha << 0.008, 0.007, 0.5, 0.05;
+    alpha << 0.008, 0.008, 0.5, 0.05;
     beta << 10, 10, 10, 5;
     
     kappa_dot << 0,0,0,0;
@@ -392,6 +396,11 @@ int main(int argc, char *argv[])
         error_dot_var.w = error_dot(3);
 
         z_des_var.data = -zD;
+
+        accelerations_des_var.x = ibvs_ctrl_input(0);
+        accelerations_des_var.y = ibvs_ctrl_input(1);
+        accelerations_des_var.z = ibvs_ctrl_input(2);
+        accelerations_control.publish(accelerations_des_var);
 
         error_pub.publish(error_var);
         adaptive_gain_pub.publish(adaptive_gain_var);

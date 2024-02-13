@@ -5,8 +5,8 @@
 	
 	<node pkg="ibvs_nftasmc" type="target_pos_node" name="target_pos_node" />
 	<node pkg="ibvs_nftasmc" type="uav_dynamics_node" name="uav_dynamics_node"  />
-	<node pkg="ibvs_nftasmc" type="image_features_node" name="image_features_node"   output="screen"   />
-	<node pkg="ibvs_nftasmc" type="ibvs_pos_ctrl_node" name="ibvs_pos_ctrl_node"  />
+	<node pkg="ibvs_nftasmc" type="image_features_node" name="image_features_node"     />
+	<node pkg="ibvs_nftasmc" type="ibvs_pos_ctrl_node" name="ibvs_pos_ctrl_node" output="screen"  />
 	<node pkg="ibvs_nftasmc" type="attitude_nftasmc_node" name="attitude_nftasmc_node"  />
 	<node pkg="ibvs_nftasmc" type="disturbances_node" name="disturbances_node"  />
 		

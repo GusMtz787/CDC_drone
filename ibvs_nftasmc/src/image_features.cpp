@@ -64,7 +64,7 @@ float aD = 0.0000007970;
 float focal_length = 0.00304;
 //float pixel_size = 0.00000112; //frame size = raspy cam's default image size
 float pixel_size = 0.00000876923; //For frame_size = 410x308
-//float new_focal_length = focal_length*pixel_size; 
+//float new_focal_length = focal_length*pixel_size;
 
 /////////////////////////Functions///////////////////////////////
 
@@ -90,7 +90,7 @@ Eigen::Matrix3f Rtp(float roll, float pitch)
 }
 
 Eigen::Matrix3f Ryaw(float yaw)
-{   
+{
     Eigen::Matrix3f yaw_mat;
     yaw_mat << cos(yaw), -sin(yaw),0,
                 sin(yaw), cos(yaw), 0,
@@ -110,9 +110,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg)
 		//cv::circle(frame, cv::Point(ug3, ng3), 8, cv::Scalar(0, 0, 255));
 		//cv::circle(frame, cv::Point(ug4, ng4), 8, cv::Scalar(255, 255, 0));
 	}
-	
+
 	catch(cv_bridge::Exception& e)
-	{ 
+	{
 		ROS_ERROR("Couldn't convert from '%s' to 'bgr8'.", msg->encoding.c_str());
 	}
 }
@@ -130,8 +130,8 @@ int main(int argc, char *argv[])
 	ros::init(argc, argv, "image_features");
 	ros::NodeHandle nh;
     image_transport::ImageTransport it(nh);
-	ros::Rate loop_rate(50);	
-    
+	ros::Rate loop_rate(50);
+
     //ROS publishers and subscribers
 	ros::Publisher im_feat_pub = nh.advertise<geometry_msgs::Quaternion>("ImFeat_vector",100);
     ros::Publisher a_value_pub = nh.advertise<std_msgs::Float64>("a_value",100);
@@ -141,10 +141,10 @@ int main(int argc, char *argv[])
 	ros::Publisher punto4_pub = nh.advertise<geometry_msgs::Pose2D>("point_four",100);
 	ros::Publisher centroid_pub = nh.advertise<geometry_msgs::Pose2D>("centroid",100);
 
-    image_transport::Subscriber sub = it.subscribe("/quad/camera/image_raw", 100, imageCallback); //Gazebo_camera 
+    image_transport::Subscriber sub = it.subscribe("/quad/camera/image_raw", 100, imageCallback); //Gazebo_camera
     //image_transport::Subscriber sub = it.subscribe("camera/image", 100, imageCallback); //Real camera
 	ros::Subscriber attitude_sub = nh.subscribe("quad_attitude",100, &attitude_callback);
-	    
+
     //Declaring local variables
     geometry_msgs::Quaternion im_feat_vec;
     std_msgs::Float64 a_val;
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 	geometry_msgs::Pose2D punto4_vis;
 	geometry_msgs::Pose2D centroid;
     e3 << 0,0,1;
-    
+
 	//Loading the dictionary where the aruco markers belong to
 	cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_7X7_50);
 
@@ -162,11 +162,11 @@ int main(int argc, char *argv[])
 	{
         //Initializing the detector parameters using default values
 		cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
-		//Declaring the 2D vectors that contain the aruco's corners and rejected candidates 
+		//Declaring the 2D vectors that contain the aruco's corners and rejected candidates
 		std::vector<std::vector<cv::Point2f>> markerCorners, rejectCandidates;
 		//Declaring a vector to save de ID numbers of the detected arucos
 		std::vector<int> markerIds;
-		
+
 		if(!frame.empty())
 		{
 			//Detect the markers in the image
@@ -407,11 +407,11 @@ int main(int argc, char *argv[])
 				ug4 = (p14.x + p24.x + p34.x + p44.x) / 4;
 				ng4 = (p14.y + p24.y + p34.y + p44.y) / 4;
 			}
-			
+
             //Centroid of the target
 			ug = (ug1 + ug2 + ug3 + ug4) / 4;
 			ng = (ng1 + ng2 + ng3 + ng4) / 4;
-			
+
             /* Indicators
 			cv::circle(frame, cv::Point(ug, ng), 8, cv::Scalar(255, 0, 255));
 			cv::circle(frame, cv::Point(ug1, ng1), 8, cv::Scalar(255, 0, 0));
@@ -429,32 +429,32 @@ int main(int argc, char *argv[])
 
             //Changing Image coordinates system from the left-top to the center.
 			/*
-											+y	^		
+											+y	^
 												|
 												|
 												|
 			      					-x <--------|---------> +x
 					      						|
 			      								|
-			      								|		
 			      								|
-			      								-y		
-					
+			      								|
+			      								-y
+
 			*/
 			p1x = p1.x-frame.size().width/2;
 			p1y = -(p1.y-frame.size().height/2);
-			
+
 			p2x = p2.x-frame.size().width/2;
 			p2y = -(p2.y-frame.size().height/2);
-			
+
 			p3x = p3.x-frame.size().width/2;
 			p3y = -(p3.y-frame.size().height/2);
-			
+
 			p4x = p4.x-frame.size().width/2;
 			p4y = -(p4.y-frame.size().height/2);
 
-            //Camera frame point data (u,n,focal_length)
-            p1_vs_cf << p1x*pixel_size, p1y*pixel_size, focal_length;
+      //Camera frame point data (u,n,focal_length)
+      p1_vs_cf << p1x*pixel_size, p1y*pixel_size, focal_length;
 			p2_vs_cf << p2x*pixel_size, p2y*pixel_size, focal_length;
 			p3_vs_cf << p3x*pixel_size, p3y*pixel_size, focal_length;
 			p4_vs_cf << p4x*pixel_size, p4y*pixel_size, focal_length;
@@ -465,7 +465,7 @@ int main(int argc, char *argv[])
 			beta_p3 = focal_length/(e3.transpose()*Rtp(uav_att(0),uav_att(1))*p3_vs_cf);
 			beta_p4 = focal_length/(e3.transpose()*Rtp(uav_att(0),uav_att(1))*p4_vs_cf);
 
-            p1_vs_vf = beta_p1*Rtp(uav_att(0),uav_att(1))*p1_vs_cf;
+      p1_vs_vf = beta_p1*Rtp(uav_att(0),uav_att(1))*p1_vs_cf;
 			p2_vs_vf = beta_p2*Rtp(uav_att(0),uav_att(1))*p2_vs_cf;
 			p3_vs_vf = beta_p3*Rtp(uav_att(0),uav_att(1))*p3_vs_cf;
 			p4_vs_vf = beta_p4*Rtp(uav_att(0),uav_att(1))*p4_vs_cf;
@@ -475,32 +475,33 @@ int main(int argc, char *argv[])
 			p2_vs_vf = Ryaw(uav_att(2)).transpose()*Ryaw(uav_att(2)).transpose()*p2_vs_vf;
 			p3_vs_vf = Ryaw(uav_att(2)).transpose()*Ryaw(uav_att(2)).transpose()*p3_vs_vf;
 			p4_vs_vf = Ryaw(uav_att(2)).transpose()*Ryaw(uav_att(2)).transpose()*p4_vs_vf;
-			*/	
+			*/
 
-            //Ordinary moments. Centroid
+      //Ordinary moments. Centroid
 			ug_vs = (p1_vs_vf(0) + p2_vs_vf(0) + p3_vs_vf(0) + p4_vs_vf(0)) / 4;
 			ng_vs = (p1_vs_vf(1) + p2_vs_vf(1) + p3_vs_vf(1) + p4_vs_vf(1)) / 4;
-			
+
 			//Momentos centrados
 			mu20 = powf((p1_vs_vf(0) - ug_vs), 2) +  powf((p2_vs_vf(0) - ug_vs), 2) +  powf((p3_vs_vf(0) - ug_vs), 2) +  powf((p4_vs_vf(0) - ug_vs), 2);
 			mu02 = powf((p1_vs_vf(1) - ng_vs), 2) +  powf((p2_vs_vf(1) - ng_vs), 2) +  powf((p3_vs_vf(1) - ng_vs), 2) +  powf((p4_vs_vf(1) - ng_vs), 2);
 			mu11 = ((p1_vs_vf(0) - ug_vs) * (p1_vs_vf(1) - ng_vs)) + ((p2_vs_vf(0) - ug_vs) * (p2_vs_vf(1) - ng_vs)) + ((p3_vs_vf(0) - ug_vs) * (p3_vs_vf(1) - ng_vs)) + ((p4_vs_vf(0) - ug_vs) * (p4_vs_vf(1) - ng_vs));
 			den = mu20-mu02;
 
-            //Image features vector
+      //Image features vector
 			a = mu20 + mu02;
 			qz = sqrt(aD/a);
 			qx = qz * ng_vs/focal_length;
 			qy = qz * ug_vs/focal_length;
 			qpsi = -0.5 * atan(2*mu11/den);
+			std::cout << 0.5 * atan(2*mu11/den) * (180/3.14) << std::endl;
 
-            //Publishing data via Rostopics
-            im_feat_vec.x = qx;
-            im_feat_vec.y = qy;
-            im_feat_vec.z = qz;
-            im_feat_vec.w = qpsi;
+      //Publishing data via Rostopics
+      im_feat_vec.x = qx;
+      im_feat_vec.y = qy;
+      im_feat_vec.z = qz;
+      im_feat_vec.w = qpsi;
 
-            a_val.data = a;			
+      a_val.data = a;
 
 			punto1_vis.x = p1_vs_vf(0);
 			punto1_vis.y = p1_vs_vf(1);
@@ -512,16 +513,16 @@ int main(int argc, char *argv[])
 			punto4_vis.y = p4_vs_vf(1);
 			centroid.x = ug_vs;
 			centroid.y = ng_vs;
-			
 
-           	im_feat_pub.publish(im_feat_vec);
-            a_value_pub.publish(a_val);
+
+     	im_feat_pub.publish(im_feat_vec);
+      a_value_pub.publish(a_val);
 			punto1_pub.publish(punto1_vis);
 			punto2_pub.publish(punto2_vis);
 			punto3_pub.publish(punto3_vis);
 			punto4_pub.publish(punto4_vis);
 			centroid_pub.publish(centroid);
-			
+
 			std::cout << "p1 " << p1_vs_vf(0) << ", " << p1_vs_vf(1) << '\n';
 			std::cout << "p2 " << p2_vs_vf(0) << ", " << p2_vs_vf(1) << '\n';
 			std::cout << "p3 " << p3_vs_vf(0) << ", " << p3_vs_vf(1) << '\n';
@@ -532,7 +533,7 @@ int main(int argc, char *argv[])
 
 		ros::spinOnce();
 		loop_rate.sleep();
-	}  
+	}
 
     return 0;
 }
