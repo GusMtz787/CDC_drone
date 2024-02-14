@@ -1,0 +1,8 @@
+<launch>
+	
+	<node pkg="ibvs_nftasmc" type="uav_dynamics_node" name="uav_dynamics_node"  />
+	<node pkg="ibvs_nftasmc" type="ibvs_pos_ctrl_node_VICON" name="ibvs_pos_ctrl_node_VICON" output="screen"  />
+	<node pkg="ibvs_nftasmc" type="attitude_nftasmc_node_VICON" name="attitude_nftasmc_node_VICON"  />
+	<node pkg="ibvs_nftasmc" type="disturbances_node" name="disturbances_node"  />
+
+</launch>

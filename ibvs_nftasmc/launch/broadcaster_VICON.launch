@@ -1,0 +1,5 @@
+<launch>
+
+	<node pkg="ibvs_nftasmc" type="quad_broadcaster_node" name="quad_broadcaster_node"  />	
+
+</launch>

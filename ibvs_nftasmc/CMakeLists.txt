@@ -47,6 +47,12 @@ target_link_libraries(attitude_nftasmc_node ${catkin_LIBRARIES})
 add_executable(ibvs_pos_ctrl_node src/ibvs_pos_ctrl.cpp)
 target_link_libraries(ibvs_pos_ctrl_node ${catkin_LIBRARIES})
 
+add_executable(ibvs_pos_ctrl_node_VICON src/ibvs_pos_ctrl_VICON.cpp)
+target_link_libraries(ibvs_pos_ctrl_node_VICON ${catkin_LIBRARIES})
+
+add_executable(attitude_nftasmc_node_VICON src/attitude_nftasmc_VICON.cpp)
+target_link_libraries(attitude_nftasmc_node_VICON ${catkin_LIBRARIES})
+
 add_executable(uav_dynamics_node src/uav_dynamics.cpp)
 target_link_libraries(uav_dynamics_node ${catkin_LIBRARIES})
 

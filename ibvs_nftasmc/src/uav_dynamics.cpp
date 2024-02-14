@@ -15,7 +15,7 @@
 
 float step = 0.01;
 float gravity = 9.81;
-float quad_mass = 2;
+float quad_mass = 1.3;
 float thrust = quad_mass*gravity;
 
 Eigen::Vector3f linear_position;
