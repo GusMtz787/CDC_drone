@@ -158,7 +158,7 @@ void quadPosCallback(const geometry_msgs::Vector3::ConstPtr& quadPos)
 {
 	quad_pos(0) = quadPos->x;
     quad_pos(1) = quadPos->y;
-    quad_pos(2) = quadPos->z;
+    quad_pos(2) = quadPos->z * -1;
 }
 
 /////////////////////////////////Main Program//////////////////////////
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
     
     e3 << 0,0,1;
     attitude_desired << 0.0, 0.0, 0.0;
-    quad_desired_pos << 0.0, 0.0, 0.0;
+    quad_desired_pos << 0.0, 0.0, -4.0;
     quad_desired_vel << 0.0, 0.0, 0.0;
 
     thrust_var.data = thrust;
@@ -262,9 +262,9 @@ int main(int argc, char *argv[])
         {
             thrust = 30;
         }
-        else if (thrust < 0)
+        else if (thrust < -30)
         {
-            thrust = 0;
+            thrust = -30;
         }
 
         /////////////////Desired attitude//////////////////   
@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
         asmc_var.y = asmc(1);
         asmc_var.z = asmc(2);
         //Thrust
-        thrust_var.data = thrust;
+        thrust_var.data = -1 * thrust;
         //Desired attitude and yaw rate
         desired_attitude_var.x = attitude_desired(0);
         desired_attitude_var.y = attitude_desired(1);
