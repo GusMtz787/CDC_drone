@@ -158,7 +158,7 @@ void quadPosCallback(const geometry_msgs::Vector3::ConstPtr& quadPos)
 {
 	quad_pos(0) = quadPos->x;
     quad_pos(1) = quadPos->y;
-    quad_pos(2) = quadPos->z * -1;
+    quad_pos(2) = quadPos->z;
 }
 
 /////////////////////////////////Main Program//////////////////////////
@@ -207,10 +207,13 @@ int main(int argc, char *argv[])
     //alpha << 0.008, 0.007, 0.5;
     alpha << 0.008, 0.008, 0.5;
     beta << 10, 10, 10;
+
+    Eigen::Vector3f Kp(0.5, 0.5, 0.8);
+    Eigen::Vector3f Kd(0.5, 0.5, 0.8);
     
     e3 << 0,0,1;
     attitude_desired << 0.0, 0.0, 0.0;
-    quad_desired_pos << 0.0, 0.0, -4.0;
+    quad_desired_pos << 0.0, 0.0, -2.0;
     quad_desired_vel << 0.0, 0.0, 0.0;
 
     thrust_var.data = thrust;
@@ -225,52 +228,65 @@ int main(int argc, char *argv[])
     while(ros::ok()) {   
 
         // Calculate errors
-        error = quad_desired_pos - quad_pos;
-        error_dot = quad_desired_vel - quad_vel_BF;
+        // error = quad_desired_pos - quad_pos;
+        // error_dot = quad_desired_vel - quad_vel_BF;
         
         // Sliding surfaces and adaptive sliding mode controller
-        for (int i = 0; i<=2; i++)
-        {
-            ss(i) = error(i) + xi_1(i) * powf(std::abs(error(i)),lambda(i)) * sign(error(i)) + xi_2(i) * powf(std::abs(error_dot(i)),(varpi(i)/vartheta(i))) * sign(error_dot(i));
+        // for (int i = 0; i<=2; i++)
+        // {
+        //     ss(i) = error(i) + xi_1(i) * powf(std::abs(error(i)),lambda(i)) * sign(error(i)) + xi_2(i) * powf(std::abs(error_dot(i)),(varpi(i)/vartheta(i))) * sign(error_dot(i));
             
-            // *************** Traditional adaptive law ***************
-            // if (K1(i)>kmin(i))
-            // {
-            //     K1_dot(i) = k_reg(i)*sign(std::abs(ss(i))-mu(i));
-            // }
-            // else
-            // {
-            //     K1_dot(i) = kmin(i);
-            // }
+        //     // *************** Traditional adaptive law ***************
+        //     // if (K1(i)>kmin(i))
+        //     // {
+        //     //     K1_dot(i) = k_reg(i)*sign(std::abs(ss(i))-mu(i));
+        //     // }
+        //     // else
+        //     // {
+        //     //     K1_dot(i) = kmin(i);
+        //     // }
 
-            // K1(i) = K1(i) + step_size*K1_dot(i);
-            // asmc(i) = -K1(i) * powf(std::abs(ss(i)),0.5) * sign(ss(i)) - K2(i) * ss(i);
+        //     // K1(i) = K1(i) + step_size*K1_dot(i);
+        //     // asmc(i) = -K1(i) * powf(std::abs(ss(i)),0.5) * sign(ss(i)) - K2(i) * ss(i);
 
-            // *************** Modified adaptive law ***************
-            K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * powf(K1(i),2);
+        //     // *************** Modified adaptive law ***************
+        //     K1_dot(i) = sqrt(alpha(i)) * sqrt(std::abs(ss(i))) - sqrt(beta(i)) * powf(K1(i),2);
 
-            K1(i) = K1(i) + step_size*K1_dot(i);
-            asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
-        }
+        //     K1(i) = K1(i) + step_size*K1_dot(i);
+        //     asmc(i) = -2 * K1(i) * sqrt(std::abs(ss(i))) * sign(ss(i)) - (pow(K1(i),2) / 2) * ss(i);
+        // }
         
-        // Thrust calculation
-        thrust = -(quad_mass / cos(quad_att(0)) * cos(quad_att(1))) * (accelerations_desired(2) - gravity 
-                    - asmc(2) + ((1 / xi_2(2)*(varpi(2)/vartheta(2))) * powf(abs(error_dot(2)), (2 - (varpi(2)/vartheta(2)))) * sign(error_dot(2))) * 
-                    (1 + xi_1(2) * lambda(2) * powf(abs(error_dot(2)), (lambda(2) - 1))));
+        // // Thrust calculation
+        // thrust = -(quad_mass / cos(quad_att(0)) * cos(quad_att(1))) * (accelerations_desired(2) - gravity 
+        //             - asmc(2) + ((1 / xi_2(2)*(varpi(2)/vartheta(2))) * powf(abs(error_dot(2)), (2 - (varpi(2)/vartheta(2)))) * sign(error_dot(2))) * 
+        //             (1 + xi_1(2) * lambda(2) * powf(abs(error_dot(2)), (lambda(2) - 1))));
         
-        if (thrust > 30)
-        {
-            thrust = 30;
+        // if (thrust > 30)
+        // {
+        //     thrust = 30;
+        // }
+        // else if (thrust < 0)
+        // {
+        //     thrust = 0;
+        // }
+
+        error = quad_desired_pos - quad_pos;
+        error_dot = quad_desired_vel - quad_vel_BF;
+
+        // Thrust calculation 
+        thrust = -(quad_mass / (cos(quad_att(0))*cos(quad_att(1)))) * (accelerations_desired(2) + gravity - Kp(2)*error(2) - Kd(2)*error_dot(2));
+        
+        if (thrust < -30.0) {
+            thrust = -30.0;
         }
-        else if (thrust < -30)
-        {
-            thrust = -30;
+        else if (thrust > 0.0) {
+            thrust = 0.0;
         }
 
         /////////////////Desired attitude//////////////////   
         attitude_desired(2) = 0.0; // For now, yaw is fixed to 0     
-        roll_des_arg = (quad_mass / thrust) * (sin(attitude_desired(2))*asmc(0) - cos(attitude_desired(2))*asmc(1));
-        pitch_des_arg = ((quad_mass / thrust) * asmc(0) - sin(attitude_desired(2))*sin(attitude_desired(0))) / (cos(attitude_desired(2))*cos(attitude_desired(0)));
+        roll_des_arg = (quad_mass / thrust) * (sin(attitude_desired(2))*(Kp(0)*error(0) + Kd(0)*error(0)) - cos(attitude_desired(2))*(Kp(1)*error(1) + Kd(1)*error(1)));
+        pitch_des_arg = ((quad_mass / thrust) * (Kp(0)*error(0) + Kd(0)*error(0)) - sin(attitude_desired(2))*sin(attitude_desired(0))) / (cos(attitude_desired(2))*cos(attitude_desired(0)));
 
         //////////////////Saturating the desired roll and pitch rotations up to pi/2 to avoid singularities
         if (roll_des_arg > 1) {
@@ -289,6 +305,10 @@ int main(int argc, char *argv[])
         attitude_desired(0) = asin(roll_des_arg); //Roll desired
         attitude_desired(1) = asin(pitch_des_arg); //Pitch desired
  
+        // DEBUGGING
+        // attitude_desired(0) = 0.0; //Roll desired
+        // attitude_desired(1) = 0.0; //Pitch desired
+
         //Publishing data
         //error
         error_var.x = error(0);
@@ -303,7 +323,7 @@ int main(int argc, char *argv[])
         asmc_var.y = asmc(1);
         asmc_var.z = asmc(2);
         //Thrust
-        thrust_var.data = -1 * thrust;
+        thrust_var.data = thrust;
         //Desired attitude and yaw rate
         desired_attitude_var.x = attitude_desired(0);
         desired_attitude_var.y = attitude_desired(1);
