@@ -118,8 +118,8 @@ int main(int argc, char **argv)
 		 0, 0.0478, 0,
 		 0, 0, 0.0599;
 	
-	linear_position << 3.0,0,-2.0;
-	attitude_position << 0,0,0;
+	linear_position << 0.0,0,-2.0;
+	attitude_position << 0,0,0.75;
 
 	linear_velocity_BF << 0,0,0;
 	linear_velocity_IF << 0,0,0;
@@ -180,24 +180,24 @@ int main(int argc, char **argv)
 			linear_position(i) = linear_position(i) + step * linear_velocity_IF(i);
 		}
 		
-		positionVector.x = linear_position(0);
-		positionVector.y = linear_position(1);
+		positionVector.x = 0.0;
+		positionVector.y = 0.0;
 		positionVector.z = linear_position(2);
 		
-		attitudeVector.x = attitude_position(0);
-		attitudeVector.y = attitude_position(1);
+		attitudeVector.x = 0.0;
+		attitudeVector.y = 0.0;
 		attitudeVector.z = attitude_position(2);
 		
-		velocityVector.x = linear_velocity_IF(0);
-		velocityVector.y = linear_velocity_IF(1);
+		velocityVector.x = 0.0;
+		velocityVector.y = 0.0;
 		velocityVector.z = linear_velocity_IF(2);
 		
-		att_velVector.x = attitude_velocity(0);
-		att_velVector.y = attitude_velocity(1);
+		att_velVector.x = 0.0;
+		att_velVector.y = 0.0;
 		att_velVector.z = attitude_velocity(2);
 		
-		BFvelocityVector.x = linear_velocity_BF(0);
-		BFvelocityVector.y = linear_velocity_BF(1);
+		BFvelocityVector.x = 0.0;
+		BFvelocityVector.y = 0.0;
 		BFvelocityVector.z = linear_velocity_BF(2);
 		
 		positionPub.publish(positionVector);

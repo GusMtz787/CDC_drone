@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
     alpha << 0.008, 0.008, 0.5;
     beta << 10, 10, 10;
 
-    Eigen::Vector3f Kp(0.5, 0.5, 0.8);
-    Eigen::Vector3f Kd(0.5, 0.5, 0.8);
+    Eigen::Vector3f Kp(0.1, 0.1, 3.5);
+    Eigen::Vector3f Kd(0.05, 0.05, 3.0);
     
     e3 << 0,0,1;
     attitude_desired << 0.0, 0.0, 0.0;

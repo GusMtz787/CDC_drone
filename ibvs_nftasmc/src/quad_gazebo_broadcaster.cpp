@@ -3,6 +3,7 @@
 #include <geometry_msgs/Vector3.h>
 #include "gazebo_msgs/ModelState.h"
 #include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 
 float pos_x;
 float pos_y;
@@ -50,7 +51,13 @@ int main(int argc, char** argv)
 		q_rot.setRPY(3.141592,0,0);
 		q = q_rot * myQuaternion;
 		q.normalize();
-		
+		tf2::Matrix3x3 matrix(q);
+		double roll, pitch, yaw;
+		matrix.getRPY(roll, pitch, yaw);
+		std::cout << roll << std::endl;
+		std::cout << pitch << std::endl;
+		std::cout << yaw << std::endl;
+
 		states.pose.position.x = pos_x;
 		states.pose.position.y = -pos_y;
 		states.pose.position.z = -pos_z;

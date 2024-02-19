@@ -135,8 +135,8 @@ int main(int argc, char *argv[])
 	// attitude_vel_des(0) = 0;
 	// attitude_vel_des(1) = 0;
 
-	Eigen::Vector3f Kp(0.5, 0.8, 0.5);
-	Eigen::Vector3f Kd(0.2, 0.5, 0.2);
+	Eigen::Vector3f Kp(10, 10, 3);
+	Eigen::Vector3f Kd(0.05, 0.05, 0.8);
 
 	attitude_vel_des << 0.0, 0.0, 0.0;
 	attitude_acc_des << 0.0, 0.0, 0.0;
@@ -182,9 +182,9 @@ int main(int argc, char *argv[])
 		tau(1) = Jyy * (attitude_acc_des(1) - (((Jzz-Jxx)/Jyy) * attitude_vel(0) * attitude_vel(2)) - Kp(1)*error(1) - Kd(1)*error_dot(1));
 		tau(2) = Jzz * (attitude_acc_des(2) - (((Jxx-Jyy)/Jzz) * attitude_vel(0) * attitude_vel(1)) - Kp(2)*error(2) - Kd(2)*error_dot(2));		
 		
-		quadTorques.x = tau(0);
-		quadTorques.y = tau(1);
-		quadTorques.z = tau(2);
+		quadTorques.x = -tau(0);
+		quadTorques.y = -tau(1);
+		quadTorques.z = -tau(2);
 		
 		adaptive_gains_att.x = K1(0);
 		adaptive_gains_att.y = K1(1);
