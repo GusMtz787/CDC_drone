@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
     alpha << 0.008, 0.008, 0.5;
     beta << 10, 10, 10;
 
-    Eigen::Vector3f Kp(0.1, 0.1, 3.5);
-    Eigen::Vector3f Kd(0.05, 0.05, 3.0);
+    Eigen::Vector3f Kp(0.7, 0.7, 3.5);
+    Eigen::Vector3f Kd(0.9, 0.9, 3.0);
     
     e3 << 0,0,1;
     attitude_desired << 0.0, 0.0, 0.0;
@@ -285,16 +285,21 @@ int main(int argc, char *argv[])
 
         /////////////////Desired attitude//////////////////   
         attitude_desired(2) = 0.0; // For now, yaw is fixed to 0     
-        roll_des_arg = (quad_mass / thrust) * (sin(attitude_desired(2))*(Kp(0)*error(0) + Kd(0)*error(0)) - cos(attitude_desired(2))*(Kp(1)*error(1) + Kd(1)*error(1)));
-        pitch_des_arg = ((quad_mass / thrust) * (Kp(0)*error(0) + Kd(0)*error(0)) - sin(attitude_desired(2))*sin(attitude_desired(0))) / (cos(attitude_desired(2))*cos(attitude_desired(0)));
-
-        //////////////////Saturating the desired roll and pitch rotations up to pi/2 to avoid singularities
+        
+        roll_des_arg = (quad_mass / thrust) * (sin(attitude_desired(2))*(Kp(0)*error(0) + Kd(0)*error_dot(0)) - cos(attitude_desired(2))*(Kp(1)*error(1) + Kd(1)*error_dot(1)));
+        
         if (roll_des_arg > 1) {
             roll_des_arg = 1;
         }
         else if (roll_des_arg < -1) {
             roll_des_arg = -1;
         }
+        
+        attitude_desired(0) = asin(roll_des_arg); //Roll desired
+
+        pitch_des_arg = ((quad_mass / thrust) * (Kp(0)*error(0) + Kd(0)*error_dot(0)) - sin(attitude_desired(2))*sin(attitude_desired(0))) / (cos(attitude_desired(2))*cos(attitude_desired(0)));
+
+        //////////////////Saturating the desired roll and pitch rotations up to pi/2 to avoid singularities
         if (pitch_des_arg > 1) {
             pitch_des_arg = 1;
         }
@@ -302,9 +307,21 @@ int main(int argc, char *argv[])
             pitch_des_arg = -1;
         }
 
-        attitude_desired(0) = asin(roll_des_arg); //Roll desired
         attitude_desired(1) = asin(pitch_des_arg); //Pitch desired
  
+        // if (attitude_desired(0) > 0.26) {
+        //     attitude_desired(0) = 0.26;
+        // } 
+        // else if (attitude_desired(0) < -0.26) {
+        //     attitude_desired(0) = -0.26;
+        // }
+        // if (attitude_desired(1) > 0.26) {
+        //     attitude_desired(1) = 0.26;
+        // } 
+        // else if (attitude_desired(1) < -0.26) {
+        //     attitude_desired(1) = -0.26;
+        // }
+
         // DEBUGGING
         // attitude_desired(0) = 0.0; //Roll desired
         // attitude_desired(1) = 0.0; //Pitch desired
